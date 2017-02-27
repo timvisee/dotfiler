@@ -1,8 +1,9 @@
 extern crate clap;
-extern crate dotfiler;
+
+mod app;
+mod dotconfig;
 
 use clap::App;
-use dotfiler::app;
 
 /// Application entry point.
 fn main() {

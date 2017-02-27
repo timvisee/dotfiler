@@ -1,5 +1,6 @@
 extern crate config;
 
+use app::CONFIG_FILE_TYPE;
 use self::config::{Config, File, FileFormat};
 
 pub struct DotConfig {
@@ -17,6 +18,6 @@ impl DotConfig {
 
     /// Load configuration from the given file.
     pub fn load_from_file(&mut self, file: &str) {
-        &self.c.merge(File::new(file, FileFormat::Yaml)).unwrap();
+        &self.c.merge(File::new(file, CONFIG_FILE_TYPE)).unwrap();
     }
 }
