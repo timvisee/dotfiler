@@ -1,6 +1,7 @@
 use app::CONFIG_FILE_NAME;
 use std::path::PathBuf;
 use super::dotconfig::DotConfig;
+use super::scanner::Scanner;
 
 /// Points to a path that contains dotfiles or subdirectories with dotfiles.
 /// It also holds the configuration for the specific directory.
@@ -58,5 +59,12 @@ impl<'a> DotPath<'a> {
         // Load the configuration and return the result
         self.config.load_from_file(config_path_str).unwrap();
         true
+    }
+
+    /// Create a new scanner instance for this dot path.
+    ///
+    /// Returns a new scanner instance.
+    pub fn create_scanner(&self) -> Scanner {
+        Scanner::new(self)
     }
 }
