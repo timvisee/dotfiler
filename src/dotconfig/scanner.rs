@@ -6,7 +6,7 @@ use super::dotconfig::DotConfig;
 /// Scanner class, that is part of a dotpath.
 /// This scanner scans for dotfiles and subdirectories containing dotfiles.
 pub struct Scanner<'a> {
-    path: &'a DotPath<'a>
+    path: &'a DotPath
 }
 
 impl<'a> Scanner<'a> {

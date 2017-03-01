@@ -5,20 +5,20 @@ use super::scanner::Scanner;
 
 /// Points to a path that contains dotfiles or subdirectories with dotfiles.
 /// It also holds the configuration for the specific directory.
-pub struct DotPath<'a> {
+pub struct DotPath {
     path: PathBuf,
     config: DotConfig,
-    parent: Option<&'a DotPath<'a>>
+    children: Vec<DotPath>
 }
 
-impl<'a> DotPath<'a> {
+impl DotPath {
 
     /// Constructor.
-    pub fn new(path: PathBuf, parent: Option<&'a DotPath<'a>>) -> Self {
+    pub fn new(path: PathBuf) -> Self {
         DotPath {
             path: path,
             config: DotConfig::new(),
-            parent: parent
+            children: Vec::new()
         }
     }
 
@@ -44,7 +44,7 @@ impl<'a> DotPath<'a> {
     ///
     /// Returns true if any configuration was loaded.
     /// False is returned if the file doesn't exist.
-    pub fn load_config(mut self) -> bool {
+    pub fn load_config(&mut self) -> bool {
         // Get the configuration path
         let config_path = self.get_config_path();
 
@@ -59,6 +59,23 @@ impl<'a> DotPath<'a> {
         // Load the configuration and return the result
         self.config.load_from_file(config_path_str).unwrap();
         true
+    }
+
+    /// Create a new child dot path
+    ///
+    /// The name of the subdirectory should be passed to the `dir` parameter.
+    pub fn create_child(&mut self, dir: &str) {
+        // Create the path for the subdirectory
+        let mut path = PathBuf::from(&self.path);
+        path.push(dir);
+
+        // Create the child and add it to the list of children
+        self.add_child(Self::new(path));
+    }
+
+    /// Add the given child to this dot path.
+    pub fn add_child(&mut self, child: DotPath) {
+        self.children.push(child);
     }
 
     /// Create a new scanner instance for this dot path.

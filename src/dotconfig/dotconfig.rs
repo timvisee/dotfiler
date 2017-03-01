@@ -20,7 +20,7 @@ impl DotConfig {
     /// Load configuration from the given file.
     ///
     /// The file path should be passed to the `file` parameter.
-    pub fn load_from_file(mut self, file: &str) -> Result<(), Box<Error>> {
+    pub fn load_from_file(&mut self, file: &str) -> Result<(), Box<Error>> {
         self.c.merge(File::new(file, CONFIG_FILE_TYPE))
     }
 }
