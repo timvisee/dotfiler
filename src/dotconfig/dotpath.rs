@@ -22,6 +22,11 @@ impl DotPath {
         }
     }
 
+    /// Get a path reference.
+    pub fn get_path(&self) -> &PathBuf {
+        &self.path
+    }
+
     /// Get a configuration reference.
     pub fn get_config(&self) -> &DotConfig {
         &self.config
@@ -78,10 +83,15 @@ impl DotPath {
         self.children.push(child);
     }
 
-    /// Create a new scanner instance for this dot path.
-    ///
-    /// Returns a new scanner instance.
-    pub fn create_scanner(&self) -> Scanner {
-        Scanner::new(self)
+    /// Scan this dotpath for dotfiles and subdirectories that contain dotfiles.
+    pub fn scan(&self, recursive: &bool) {
+        // Create a new scanner and initiate a scan
+        Scanner::new(self).scan();
+
+        // Loop through the children
+        for child in &self.children {
+            // Scan on each subdirectory
+            child.scan(&recursive);
+        }
     }
 }

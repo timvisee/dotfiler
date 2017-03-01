@@ -22,4 +22,12 @@ impl<'a> Scanner<'a> {
     pub fn get_config(&self) -> &DotConfig {
         self.path.get_config()
     }
+
+    /// Scan the dotpath for dotfiles and subdirectories that contain dotfiles.
+    pub fn scan(&self) {
+        // Get the path to search in
+        let path = self.path.get_path();
+
+        // TODO: Find subdirectories and dotfiles, add them to the dotpath
+    }
 }
