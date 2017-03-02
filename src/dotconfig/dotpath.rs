@@ -84,14 +84,16 @@ impl DotPath {
     }
 
     /// Scan this dotpath for dotfiles and subdirectories that contain dotfiles.
-    pub fn scan(&self, recursive: &bool) {
+    pub fn scan(&mut self, recursive: &bool) {
         // Create a new scanner and initiate a scan
         Scanner::new(self).scan();
 
-        // Loop through the children
-        for child in &self.children {
-            // Scan on each subdirectory
-            child.scan(&recursive);
+        // If to scan recursive, loop through the children
+        if *recursive {
+            for child in &mut self.children {
+                // Scan on each subdirectory
+                child.scan(&recursive);
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ mod app;
 mod dotconfig;
 
 use clap::App;
+use dotconfig::dotpath::DotPath;
+use std::path::PathBuf;
 
 /// Application entry point.
 fn main() {
@@ -11,6 +13,11 @@ fn main() {
     handle_arguments();
 
     println!("Hello, world!");
+
+    // Test the scanning functionality
+    let base_path = "/home/timvisee/Documents";
+    let mut path = DotPath::new(PathBuf::from(base_path));
+    path.scan(&false);
 }
 
 /// Handle program arguments passed along with the command line to show things like help pages.
