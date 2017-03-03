@@ -1,6 +1,5 @@
 use std::fs;
 
-use super::dotpath::DotPath;
 use super::dotdir::DotDir;
 
 /// Scanner class, that is part of a dotpath.
@@ -21,7 +20,7 @@ impl<'a> Scanner<'a> {
     /// Scan the dotpath for dotfiles and subdirectories that contain dotfiles.
     pub fn scan(&mut self) {
         // Read the directory, and unwrap the result
-        let paths = fs::read_dir(&self.path.get_path()).unwrap();
+        let paths = fs::read_dir(&self.path.path()).unwrap();
 
         // Loop through the list of paths
         for path in paths {
@@ -29,12 +28,8 @@ impl<'a> Scanner<'a> {
             let entry = path.unwrap().path();
             let entry_name = entry.file_name().unwrap().to_str().unwrap();
 
-            // Create and add the dotpath or dotfile
-            if entry.is_dir() {
-                self.path.add_dotpath_raw(entry_name);
-            } else {
-                self.path.add_dotfile_raw(entry_name);
-            }
+            // Add the entry as a child
+            self.path.add_child_by_name(entry_name);
         }
     }
 }

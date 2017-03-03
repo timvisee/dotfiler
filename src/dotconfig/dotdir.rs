@@ -1,8 +1,6 @@
 use app::CONFIG_FILE_NAME;
 use std::path::Iter;
 use std::path::PathBuf;
-use super::dotfile::DotFile;
-use super::dotpath::DotPath;
 use super::dotconfig::DotConfig;
 use super::scanner::Scanner;
 
@@ -11,8 +9,7 @@ use super::scanner::Scanner;
 pub struct DotDir {
     path: PathBuf,
     config: DotConfig,
-    children: Vec<DotDir>,
-    files: Vec<DotFile>
+    children: Vec<DotDir>
 }
 
 impl DotDir {
@@ -23,20 +20,50 @@ impl DotDir {
         let mut dotdir = DotDir {
             path: path,
             config: DotConfig::new(),
-            children: Vec::new(),
-            files: Vec::new()
+            children: Vec::new()
         };
 
         // Load the configuration
+        // TODO: Make sure the configuration was loaded successfully!
         dotdir.load_config();
 
         // Return the created instance
         dotdir
     }
 
+    /// Get the path.
+    pub fn path(&self) -> &PathBuf {
+        &self.path
+    }
+
+    /// Check whether this dotpath is a file.
+    /// If the dotpath doesn't exist, false is returned.
+    pub fn is_file(&self) -> bool {
+        self.path.is_file()
+    }
+
+    /// Check whether this dotpath is a directory.
+    /// If the dotpath doesn't exist, false is returned.
+    pub fn is_dir(&self) -> bool {
+        self.path.is_dir()
+    }
+
+    /// Get the name of this dotpath.
+    /// If this dotpath is a directory, the name of the directory is returned.
+    /// If this dotpath is a file, the name of the file is returned including it's extension.
+    pub fn name(&self) -> &str {
+        self.path().file_name().unwrap().to_str().unwrap()
+    }
+
+    /// Check whether the given name equals the name of the dotpath.
+    /// The given name is compared to the output of `get_name()`.
+    pub fn is_name(&self, name: &str) -> bool {
+        self.name() == name
+    }
+
     /// Get the path the configuration file of this directory would be located at.
     /// A configuration might not be available in this directory.
-    fn get_config_path(&self) -> PathBuf {
+    fn config_path(&self) -> PathBuf {
         // Get the directory path
         let mut config_path = PathBuf::from(&self.path);
 
@@ -53,7 +80,7 @@ impl DotDir {
     /// False is returned if the file doesn't exist.
     fn load_config(&mut self) -> bool {
         // Get the configuration path
-        let config_path = self.get_config_path();
+        let config_path = self.config_path();
 
         // Make sure the configuration file exists, return false if it doesn't
         if !config_path.as_path().is_file() {
@@ -68,38 +95,24 @@ impl DotDir {
         true
     }
 
-    /// Add a new dotpath by it's name.
+    /// Add a new child to this dotpath by it's name as a string.
     ///
-    /// The name of the subdirectory should be passed to the `dir` parameter.
-    pub fn add_dotpath_raw(&mut self, dir: &str) {
+    /// The name of the child to add. This should be the name of the directory or file (with extension).
+    pub fn add_child_by_name(&mut self, name: &str) {
         // Create the path for the subdirectory
-        let mut path = PathBuf::from(&self.path);
-        path.push(dir);
-
-        // Create the child and add it to the list of children
-        self.add_dotpath(Self::new(path));
-    }
-
-    /// Add the given child to this dotpath.
-    pub fn add_dotpath(&mut self, child: DotDir) {
-        self.children.push(child);
-    }
-
-    /// Add a dotfile by it's name.
-    ///
-    /// The name of the dotfile including the extension should be passed to the `name` parameter.
-    pub fn add_dotfile_raw(&mut self, name: &str) {
-        // Create the path for the file
         let mut path = PathBuf::from(&self.path);
         path.push(name);
 
-        // Create the file and add it to the list of files
-        self.add_dotfile(DotFile::new(path));
+        // Create the child and add it to the list of children
+        self.add_child(Self::new(path));
     }
 
-    /// Add the given dotfile to this dotpath.
-    pub fn add_dotfile(&mut self, file: DotFile) {
-        self.files.push(file);
+    /// Add the given child to this dotpath.
+    pub fn add_child(&mut self, child: DotDir) {
+        // TODO: Make sure we aren't adding duplicate entries!
+
+        // Add the child
+        self.children.push(child);
     }
 
     /// Scan this dotpath for dotfiles and subdirectories that contain dotfiles.
@@ -116,54 +129,25 @@ impl DotDir {
         }
     }
 
-    pub fn find_dir(&self, dir: &str) -> Option<&DotDir> {
-        // Loop through the dotdir's to find the matching one
-        for dir in &self.children {
-            if dir.is_name(dir.get_name()) {
-                return Some(dir);
-            }
-        }
-
-        // Not found, return nothing
-        None
-    }
-
-    pub fn find_file(&self, file: &str) -> Option<&DotFile> {
-        // Loop through the dotfiles to find the matching one
-        for file in &self.files {
-            if file.is_name(file.get_name()) {
-                return Some(file);
-            }
-        }
-
-        // Not found, return nothing
-        None
-    }
-}
-
-impl<'a> DotPath<'a> for DotDir {
-
-    fn is_file(&'a self) -> bool {
-        false
-    }
-
-    fn is_dir(&'a self) -> bool {
-        true
-    }
-
-    fn get_path(&'a self) -> &'a PathBuf {
-        &self.path
-    }
-
-    fn get_name(&'a self) -> &'a str {
-        self.get_path().file_name().unwrap().to_str().unwrap()
-    }
-
-    fn find_dir_iter(&'a self, mut path: Iter) -> Option<&DotDir> {
-
-        match path.next() {
-            Some(comp) => self.find_dir(&comp.to_str().unwrap()),
-            None => None
-        }
-    }
+    // TODO: To implement!
+//    pub fn find(&self, dir: &str) -> Option<&DotDir> {
+//        // Loop through the dotpath's to find the matching one
+//        for path in &self.children {
+//            if path.is_name(path.name()) {
+//                return Some(path);
+//            }
+//        }
+//
+//        // Not found, return nothing
+//        None
+//    }
+//
+//    pub fn find_dir_iter(&self, mut path: Iter) -> Option<&DotDir> {
+//        // TODO: Implement this
+//
+//        match path.next() {
+//            Some(comp) => self.find(&comp.to_str().unwrap()),
+//            None => None
+//        }
+//    }
 }
