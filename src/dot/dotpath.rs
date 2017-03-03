@@ -1,4 +1,5 @@
 use app::CONFIG_FILE_NAME;
+use std::error::Error;
 use std::path::Iter;
 use std::path::PathBuf;
 use super::dotconfig::DotConfig;
@@ -23,9 +24,8 @@ impl DotPath {
             children: Vec::new()
         };
 
-        // Load the configuration
-        // TODO: Make sure the configuration was loaded successfully!
-        dotpath.load_config();
+        // Load the configuration and unwrap it
+        dotpath.load_config().unwrap();
 
         // Return the created instance
         dotpath
@@ -76,23 +76,28 @@ impl DotPath {
 
     /// Load the configuration file
     ///
-    /// Returns true if any configuration was loaded.
-    /// False is returned if the file doesn't exist.
-    fn load_config(&mut self) -> bool {
+    /// Returns a result object containing a boolean on success.
+    /// The boolean is true if any configuration was loaded, or false when there wasn't any configuration.
+    /// An error is returned if loading a configuration failed.
+    fn load_config(&mut self) -> Result<bool, Box<Error>> {
         // Get the configuration path
         let config_path = self.config_path();
 
         // Make sure the configuration file exists, return false if it doesn't
         if !config_path.as_path().is_file() {
-            return false;
+            return Ok(false);
         }
 
         // Get the configuration path as a string.
         let config_path_str = config_path.as_path().to_str().unwrap();
 
-        // Load the configuration and return the result
-        self.config.load_from_file(config_path_str).unwrap();
-        true
+        // Load the configuration, then process and return the result
+        let result = self.config.load_from_file(config_path_str);
+        if result.is_ok() {
+            Ok(true)
+        } else {
+            Err(result.unwrap_err())
+        }
     }
 
     /// Add a new child to this dotpath by it's name as a string.
