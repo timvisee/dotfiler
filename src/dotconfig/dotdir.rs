@@ -1,4 +1,5 @@
 use app::CONFIG_FILE_NAME;
+use std::path::Iter;
 use std::path::PathBuf;
 use super::dotfile::DotFile;
 use super::dotpath::DotPath;
@@ -114,9 +115,41 @@ impl DotDir {
             }
         }
     }
+
+    pub fn find_dir(&self, dir: &str) -> Option<&DotDir> {
+        // Loop through the dotdir's to find the matching one
+        for dir in &self.children {
+            if dir.is_name(dir.get_name()) {
+                return Some(dir);
+            }
+        }
+
+        // Not found, return nothing
+        None
+    }
+
+    pub fn find_file(&self, file: &str) -> Option<&DotFile> {
+        // Loop through the dotfiles to find the matching one
+        for file in &self.files {
+            if file.is_name(file.get_name()) {
+                return Some(file);
+            }
+        }
+
+        // Not found, return nothing
+        None
+    }
 }
 
 impl<'a> DotPath<'a> for DotDir {
+
+    fn is_file(&'a self) -> bool {
+        false
+    }
+
+    fn is_dir(&'a self) -> bool {
+        true
+    }
 
     fn get_path(&'a self) -> &'a PathBuf {
         &self.path
@@ -124,5 +157,13 @@ impl<'a> DotPath<'a> for DotDir {
 
     fn get_name(&'a self) -> &'a str {
         self.get_path().file_name().unwrap().to_str().unwrap()
+    }
+
+    fn find_dir_iter(&'a self, mut path: Iter) -> Option<&DotDir> {
+
+        match path.next() {
+            Some(comp) => self.find_dir(&comp.to_str().unwrap()),
+            None => None
+        }
     }
 }
