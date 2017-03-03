@@ -27,11 +27,6 @@ impl<'a> Scanner<'a> {
             // Get the entry's path
             let entry = path.unwrap().path();
 
-            // Make sure this is a directory
-            if !entry.is_dir() {
-                return;
-            }
-
             // Get the entry name
             let entry_name = entry.file_name().unwrap().to_str().unwrap();
 
