@@ -11,6 +11,7 @@
 out
 gen
 !/.idea/dictionaries
+!/.idea/dictionaries/*
 
 # File-based project format:
 *.iws

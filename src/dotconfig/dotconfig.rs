@@ -2,7 +2,7 @@ extern crate config;
 
 use app::CONFIG_FILE_TYPE;
 use std::error::Error;
-use self::config::{Config, File, FileFormat};
+use self::config::{Config, File};
 
 pub struct DotConfig {
     c: Config

@@ -1,9 +1,7 @@
 use std::fs;
-use std::path::PathBuf;
 
 use super::dotpath::DotPath;
 use super::dotdir::DotDir;
-use super::dotconfig::DotConfig;
 
 /// Scanner class, that is part of a dotpath.
 /// This scanner scans for dotfiles and subdirectories containing dotfiles.
@@ -20,11 +18,6 @@ impl<'a> Scanner<'a> {
         }
     }
 
-    /// Get the configuration of the path this scanner is for.
-    pub fn get_config(&self) -> &DotConfig {
-        self.path.get_config()
-    }
-
     /// Scan the dotpath for dotfiles and subdirectories that contain dotfiles.
     pub fn scan(&mut self) {
         // Read the directory, and unwrap the result
@@ -32,17 +25,15 @@ impl<'a> Scanner<'a> {
 
         // Loop through the list of paths
         for path in paths {
-            // Get the entry's path
+            // Get the entry's path and name
             let entry = path.unwrap().path();
+            let entry_name = entry.file_name().unwrap().to_str().unwrap();
 
-            // Check whether it's a directory
+            // Create and add the dotpath or dotfile
             if entry.is_dir() {
-                // Create a child path
-                // TODO: Should we load the configuration for this child path?
-                self.path.create_child(entry.file_name().unwrap().to_str().unwrap());
-
+                self.path.add_dotpath_raw(entry_name);
             } else {
-                // TODO: Load the dotfile
+                self.path.add_dotfile_raw(entry_name);
             }
         }
     }

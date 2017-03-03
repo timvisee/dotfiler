@@ -29,9 +29,13 @@ fn main() {
 /// handle_arguments();
 /// ```
 fn handle_arguments() {
+    // Format the version string
+    let version_str = format!("{} ({})", app::APP_VERSION_NAME, app::APP_VERSION_CODE);
+
     // Configure the application object with help information, and show matches
     App::new(app::APP_NAME)
-        .version(app::APP_VERSION_NAME)
+        .version(version_str.as_str())
+        .version_short(app::APP_VERSION_NAME)
         .author(app::APP_AUTHOR)
         .about(app::APP_DESCRIPTION)
         .get_matches();
