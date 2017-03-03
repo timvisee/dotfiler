@@ -129,25 +129,43 @@ impl DotPath {
         }
     }
 
-    // TODO: To implement!
-//    pub fn find(&self, dir: &str) -> Option<&DotPath> {
-//        // Loop through the dotpath's to find the matching one
-//        for path in &self.children {
-//            if path.is_name(path.name()) {
-//                return Some(path);
-//            }
-//        }
-//
-//        // Not found, return nothing
-//        None
-//    }
-//
-//    pub fn find_dir_iter(&self, mut path: Iter) -> Option<&DotPath> {
-//        // TODO: Implement this
-//
-//        match path.next() {
-//            Some(comp) => self.find(&comp.to_str().unwrap()),
-//            None => None
-//        }
-//    }
+    /// Find a child dotpath.
+    ///
+    /// The path given to the `path` parameter should be relative to the current dotpath.
+    pub fn find(&self, path: &str) -> Option<&DotPath> {
+        // Return self if the path is empty
+        if path.trim().is_empty() {
+            return Some(&self);
+        }
+
+        // Find the dotpath using a helper function and an iterator
+        self.find_iter(PathBuf::from(path).iter())
+    }
+
+    /// Find a child dotpath, using the given iterator.
+    ///
+    /// The iterator given to `path` must be an iterator over path components.
+    pub fn find_iter(&self, mut path: Iter) -> Option<&DotPath> {
+        // Iterate over the next path component
+        match path.next() {
+            Some(comp) => {
+                // Get the component name
+                let name = comp.to_str().unwrap();
+
+                // Loop through the children to find a matching dotpath
+                for child in &self.children {
+                    if child.is_name(name) {
+                        // Find on the child
+                        return child.find_iter(path);
+                    }
+                }
+
+                // No child found, return none
+                None
+            },
+
+            // If there are no components left, return self
+            None => Some(&self)
+        }
+    }
 }

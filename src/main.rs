@@ -4,7 +4,7 @@ mod app;
 mod dot;
 
 use clap::App;
-use dotconfig::dotpath::DotPath;
+use dot::dotpath::DotPath;
 use std::path::PathBuf;
 
 /// Application entry point.
