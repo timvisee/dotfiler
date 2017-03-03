@@ -24,8 +24,15 @@ impl<'a> Scanner<'a> {
 
         // Loop through the list of paths
         for path in paths {
-            // Get the entry's path and name
+            // Get the entry's path
             let entry = path.unwrap().path();
+
+            // Make sure this is a directory
+            if !entry.is_dir() {
+                return;
+            }
+
+            // Get the entry name
             let entry_name = entry.file_name().unwrap().to_str().unwrap();
 
             // Add the entry as a child
