@@ -16,11 +16,18 @@ impl DotDir {
 
     /// Constructor.
     pub fn new(path: PathBuf) -> Self {
-        DotDir {
+        // Create the dotdir object
+        let mut dotdir = DotDir {
             path: path,
             config: DotConfig::new(),
             children: Vec::new()
-        }
+        };
+
+        // Load the configuration
+        dotdir.load_config();
+
+        // Return the created instance
+        dotdir
     }
 
     /// Get a configuration reference.
@@ -45,7 +52,7 @@ impl DotDir {
     ///
     /// Returns true if any configuration was loaded.
     /// False is returned if the file doesn't exist.
-    pub fn load_config(&mut self) -> bool {
+    fn load_config(&mut self) -> bool {
         // Get the configuration path
         let config_path = self.get_config_path();
 
