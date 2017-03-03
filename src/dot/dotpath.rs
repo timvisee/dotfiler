@@ -117,6 +117,11 @@ impl DotPath {
 
     /// Scan this dotpath for dotfiles and subdirectories that contain dotfiles.
     pub fn scan(&mut self, recursive: &bool) {
+        // Only scan if this is a directory
+        if !self.is_dir() {
+            return;
+        }
+
         // Create a new scanner and initiate a scan
         Scanner::new(self).scan();
 
