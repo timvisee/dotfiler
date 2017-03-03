@@ -4,7 +4,7 @@ mod app;
 mod dotconfig;
 
 use clap::App;
-use dotconfig::dotpath::DotPath;
+use dotconfig::dotdir::DotDir;
 use std::path::PathBuf;
 
 /// Application entry point.
@@ -16,7 +16,7 @@ fn main() {
 
     // Test the scanning functionality
     let base_path = "/home/timvisee/Documents";
-    let mut path = DotPath::new(PathBuf::from(base_path));
+    let mut path = DotDir::new(PathBuf::from(base_path));
     path.scan(&false);
 }
 
