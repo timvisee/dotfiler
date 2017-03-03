@@ -99,6 +99,11 @@ impl DotPath {
     ///
     /// The name of the child to add. This should be the name of the directory or file (with extension).
     pub fn add_child_by_name(&mut self, name: &str) {
+        // Don't add a child with a name that's already added
+        if self.has_child_by_name(&name) {
+            return;
+        }
+
         // Create the path for the subdirectory
         let mut path = PathBuf::from(&self.path);
         path.push(name);
@@ -109,10 +114,29 @@ impl DotPath {
 
     /// Add the given child to this dotpath.
     pub fn add_child(&mut self, child: DotPath) {
-        // TODO: Make sure we aren't adding duplicate entries!
+        // Don't add a child with a name that's already added
+        if self.has_child_by_name(child.name()) {
+            return;
+        }
 
         // Add the child
         self.children.push(child);
+    }
+
+    /// Check whether there's any child with the given name.
+    ///
+    /// The name of the child to check for should be passed to the `name` parameter.
+    pub fn has_child_by_name(&self, name: &str) -> bool {
+        // Loop through the children
+        for child in &self.children {
+            // Compare the name, return true if it's equal
+            if child.is_name(&name) {
+                return true;
+            }
+        }
+
+        // No child found with this name, return false
+        false
     }
 
     /// Scan this dotpath for dotfiles and subdirectories that contain dotfiles.
