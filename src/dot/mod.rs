@@ -1,3 +1,3 @@
 pub mod dotconfig;
-pub mod dotdir;
+pub mod dotpath;
 pub mod scanner;

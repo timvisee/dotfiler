@@ -1,17 +1,17 @@
 use std::fs;
 
-use super::dotdir::DotDir;
+use super::dotpath::DotPath;
 
 /// Scanner class, that is part of a dotpath.
 /// This scanner scans for dotfiles and subdirectories containing dotfiles.
 pub struct Scanner<'a> {
-    path: &'a mut DotDir
+    path: &'a mut DotPath
 }
 
 impl<'a> Scanner<'a> {
 
     /// Constructor.
-    pub fn new(path: &'a mut DotDir) -> Self {
+    pub fn new(path: &'a mut DotPath) -> Self {
         Scanner {
             path: path
         }

@@ -6,18 +6,18 @@ use super::scanner::Scanner;
 
 /// Points to a path that contains dotfiles or subdirectories with dotfiles.
 /// It also holds the configuration for the specific directory.
-pub struct DotDir {
+pub struct DotPath {
     path: PathBuf,
     config: DotConfig,
-    children: Vec<DotDir>
+    children: Vec<DotPath>
 }
 
-impl DotDir {
+impl DotPath {
 
     /// Constructor.
     pub fn new(path: PathBuf) -> Self {
-        // Create the dotdir object
-        let mut dotdir = DotDir {
+        // Create the dotpath object
+        let mut dotpath = DotPath {
             path: path,
             config: DotConfig::new(),
             children: Vec::new()
@@ -25,10 +25,10 @@ impl DotDir {
 
         // Load the configuration
         // TODO: Make sure the configuration was loaded successfully!
-        dotdir.load_config();
+        dotpath.load_config();
 
         // Return the created instance
-        dotdir
+        dotpath
     }
 
     /// Get the path.
@@ -108,7 +108,7 @@ impl DotDir {
     }
 
     /// Add the given child to this dotpath.
-    pub fn add_child(&mut self, child: DotDir) {
+    pub fn add_child(&mut self, child: DotPath) {
         // TODO: Make sure we aren't adding duplicate entries!
 
         // Add the child
@@ -130,7 +130,7 @@ impl DotDir {
     }
 
     // TODO: To implement!
-//    pub fn find(&self, dir: &str) -> Option<&DotDir> {
+//    pub fn find(&self, dir: &str) -> Option<&DotPath> {
 //        // Loop through the dotpath's to find the matching one
 //        for path in &self.children {
 //            if path.is_name(path.name()) {
@@ -142,7 +142,7 @@ impl DotDir {
 //        None
 //    }
 //
-//    pub fn find_dir_iter(&self, mut path: Iter) -> Option<&DotDir> {
+//    pub fn find_dir_iter(&self, mut path: Iter) -> Option<&DotPath> {
 //        // TODO: Implement this
 //
 //        match path.next() {
