@@ -17,7 +17,14 @@ fn main() {
     // Test the scanning functionality
     let base_path = "/home/timvisee/Documents";
     let mut path = DotPath::new(PathBuf::from(base_path));
-    path.scan(&false);
+    path.scan(&true);
+
+    // Test script to determine whether dotpaths are working
+    // TODO: Remove this test script
+    match path.find("ah_coffee.xcf") {
+        Some(dotpath) => println!("Found: {:?}", dotpath.name()),
+        None => println!("Found none!")
+    }
 }
 
 /// Handle program arguments passed along with the command line to show things like help pages.
